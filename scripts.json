@@ -3,6 +3,8 @@
         "id": "tsb-alt-farm",
         "name": "TSB Alt Farm",
         "category": "TSB",
+        "game": "The Strongest Battlegrounds",
+        "gameUrl": "https://www.roblox.com/games/10449761463/The-Strongest-Battlegrounds",
         "description": "Alt farming with configurable main and alternate accounts.",
         "code": "getgenv().MAIN_ACCOUNT_NAME = \"mainacc\"\ngetgenv().ALT_ACCOUNTS = {\n    \"altacc1\",\n    \"altacc2\"\n}\n\nloadstring(game:HttpGet(\"https://gitlab.com/unauthorized/projectyin/-/raw/main/yinaltfarm\"))()"
     },
@@ -10,6 +12,8 @@
         "id": "tsb-public-farm",
         "name": "TSB Public Farm",
         "category": "TSB",
+        "game": "The Strongest Battlegrounds",
+        "gameUrl": "https://www.roblox.com/games/10449761463/The-Strongest-Battlegrounds",
         "description": "Public farming script.",
         "code": "loadstring(game:HttpGet(\"https://gitlab.com/unauthorized/projectyin/-/raw/main/farm\"))()"
     }
