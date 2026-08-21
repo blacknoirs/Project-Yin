@@ -3,78 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Yin — Scripts</title>
+    <title>Project Yin</title>
 
     <style>
         * {
             box-sizing: border-box;
         }
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100%;
-            background: #070707;
-            color: #eeeeee;
-            font-family: Inter, Arial, Helvetica, sans-serif;
+        :root {
+            --bg: #060606;
+            --panel: #0c0c0d;
+            --panel-hover: #101011;
+            --border: #1c1c1e;
+            --border-hover: #303033;
+            --red: #e31342;
+            --red-hover: #f0194b;
+            --red-dark: #17070c;
+            --text: #f3f3f3;
+            --muted: #77777b;
+            --muted2: #4c4c50;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             overflow-x: hidden;
         }
 
-        ::selection {
-            background: #a90d2f;
-            color: white;
+        a {
+            color: inherit;
+            text-decoration: none;
         }
 
-        .background {
+        button,
+        input {
+            font: inherit;
+        }
+
+        ::selection {
+            background: var(--red);
+            color: #fff;
+        }
+
+        /* BACKGROUND */
+
+        .noise {
             position: fixed;
             inset: 0;
+            z-index: 100;
             pointer-events: none;
-
-            background:
-                radial-gradient(
-                    circle at 15% 20%,
-                    rgba(190, 15, 50, 0.075),
-                    transparent 28%
-                ),
-                radial-gradient(
-                    circle at 85% 80%,
-                    rgba(190, 15, 50, 0.045),
-                    transparent 25%
-                );
+            opacity: .025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
         }
 
-        header {
-            width: 100%;
-            height: 72px;
+        .glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            background: rgba(190, 0, 45, .08);
+            filter: blur(120px);
+        }
 
-            border-bottom: 1px solid #181818;
+        /* NAVBAR */
 
-            display: flex;
-            align-items: center;
-
-            background: rgba(7, 7, 7, 0.88);
-            backdrop-filter: blur(14px);
-
+        nav {
+            height: 70px;
             position: sticky;
             top: 0;
             z-index: 50;
+            border-bottom: 1px solid #171719;
+            background: rgba(6, 6, 6, .84);
+            backdrop-filter: blur(18px);
         }
 
-        .header-inner {
-            width: 100%;
-            max-width: 1120px;
-
+        .nav-inner {
+            max-width: 1160px;
+            height: 100%;
             margin: auto;
             padding: 0 24px;
-
             display: flex;
             align-items: center;
-            justify-content: space-between;
         }
 
         .brand {
@@ -83,320 +101,525 @@
             gap: 11px;
         }
 
-        .yin-yang {
-            width: 31px;
-            height: 31px;
-
-            border-radius: 50%;
-
+        .yin {
+            width: 32px;
+            height: 32px;
             position: relative;
             overflow: hidden;
-
-            background: #e5e5e5;
-
+            border-radius: 50%;
+            background: #fff;
             box-shadow:
-                0 0 0 1px #292929,
-                0 0 22px rgba(220, 20, 55, 0.12);
+                0 0 0 1px #353535,
+                0 0 28px rgba(227, 19, 66, .12);
         }
 
-        .yin-yang::before {
+        .yin::before {
             content: "";
-
             position: absolute;
-
             width: 50%;
             height: 100%;
-
             left: 0;
             top: 0;
-
             background: #080808;
-
-            border-radius:
-                100% 0 0 100% /
-                50% 0 0 50%;
         }
 
-        .yin-yang::after {
+        .yin::after {
             content: "";
-
             position: absolute;
-
-            width: 50%;
-            height: 50%;
-
-            left: 25%;
+            width: 16px;
+            height: 16px;
+            left: 8px;
             top: 0;
-
-            background: #080808;
-
             border-radius: 50%;
-
-            box-shadow:
-                0 15.5px 0 0 #e5e5e5;
+            background: #080808;
+            box-shadow: 0 16px 0 #fff;
         }
 
-        .brand-name {
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: -0.2px;
+        .brand-text {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .3px;
         }
 
-        .brand-name span {
-            color: #b91236;
+        .brand-text span {
+            color: var(--red);
         }
 
-        .header-right {
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 35px;
+        }
+
+        .nav-link {
+            padding: 8px 11px;
+            color: #666;
             font-size: 12px;
-            color: #555;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: .15s;
         }
 
-        .socials {
+        .nav-link:hover {
+            color: #ddd;
+            background: #101011;
+        }
+
+        .nav-social {
+            margin-left: auto;
             display: flex;
             align-items: center;
             gap: 7px;
-            margin-left: auto;
-            margin-right: 20px;
         }
 
-        .socials a {
-            color: #777;
-            text-decoration: none;
-
+        .nav-social a {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 11px;
+            border: 1px solid #202022;
+            border-radius: 7px;
+            color: #aaa;
             font-size: 11px;
-            font-weight: 600;
-
-            padding: 7px 10px;
-
-            border: 1px solid #1b1b1b;
-            border-radius: 6px;
-
-            background: #0b0b0b;
-
-            transition:
-                color 0.12s ease,
-                border-color 0.12s ease,
-                background 0.12s ease;
+            font-weight: 700;
+            background: #0b0b0c;
+            transition: .15s;
         }
 
-        .socials a:hover {
-            color: #eee;
-            background: #111;
-            border-color: #2a2a2a;
+        .nav-social a:hover {
+            color: #fff;
+            border-color: #39393b;
+            background: #111113;
         }
 
-        main {
-            width: 100%;
-            max-width: 1120px;
+        .icon {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
 
+        /* HERO */
+
+        .hero {
+            max-width: 1160px;
             margin: auto;
-
-            padding: 55px 24px 80px;
-
+            padding: 85px 24px 65px;
             position: relative;
         }
 
-        .intro {
-            margin-bottom: 32px;
+        .hero-content {
+            max-width: 690px;
+            position: relative;
+            z-index: 2;
         }
 
-        .intro-small {
-            color: #8a8a8a;
-
-            font-size: 11px;
-            font-weight: 600;
-
-            letter-spacing: 1.8px;
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 9px;
+            border: 1px solid #35101b;
+            border-radius: 6px;
+            background: rgba(100, 0, 25, .12);
+            color: #c3294c;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
-
-            margin-bottom: 10px;
         }
 
-        .intro h1 {
-            margin: 0;
-
-            font-size: 35px;
-            line-height: 1.1;
-
-            letter-spacing: -1.5px;
-
-            font-weight: 750;
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 10px var(--red);
         }
 
-        .intro p {
-            margin: 10px 0 0;
-
-            max-width: 560px;
-
-            color: #666;
-
-            font-size: 13px;
-            line-height: 1.6;
+        .hero h1 {
+            margin: 19px 0 0;
+            font-size: clamp(48px, 7vw, 78px);
+            line-height: .98;
+            letter-spacing: -4px;
+            font-weight: 850;
         }
 
-        .search-wrap {
-            margin-bottom: 22px;
-            position: relative;
+        .hero h1 span {
+            color: var(--red);
         }
 
-        .search {
-            width: 100%;
-            height: 44px;
-
-            padding: 0 14px 0 42px;
-
-            border-radius: 8px;
-
-            border: 1px solid #1c1c1c;
-
-            outline: none;
-
-            background: #0c0c0c;
-
-            color: #eee;
-
-            font-size: 13px;
-
-            transition:
-                border-color 0.15s ease,
-                background 0.15s ease;
-        }
-
-        .search:focus {
-            border-color: #3b1720;
-            background: #0e0e0e;
-        }
-
-        .search::placeholder {
-            color: #4d4d4d;
-        }
-
-        .search-icon {
-            position: absolute;
-
-            left: 15px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            color: #555;
-
+        .hero p {
+            max-width: 570px;
+            margin: 19px 0 0;
+            color: #777;
             font-size: 14px;
-
-            pointer-events: none;
+            line-height: 1.7;
         }
 
-        #scripts {
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 12px;
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 28px;
         }
 
-        .script {
-            min-width: 0;
-
-            background: #0c0c0c;
-
-            border: 1px solid #1a1a1a;
-
-            border-radius: 9px;
-
-            overflow: hidden;
-
-            transition:
-                border-color 0.15s ease,
-                transform 0.15s ease;
+        .primary-btn,
+        .secondary-btn {
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 15px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 750;
+            cursor: pointer;
+            transition: .15s;
         }
 
-        .script:hover {
-            border-color: #292929;
+        .primary-btn {
+            color: #fff;
+            background: var(--red);
+            border: 1px solid var(--red);
+            box-shadow: 0 7px 25px rgba(227, 19, 66, .15);
+        }
+
+        .primary-btn:hover {
+            background: var(--red-hover);
+            border-color: var(--red-hover);
             transform: translateY(-1px);
         }
 
-        .script-head {
-            padding: 17px 17px 14px;
-
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-
-            gap: 15px;
+        .secondary-btn {
+            color: #aaa;
+            background: #0d0d0e;
+            border: 1px solid #242426;
         }
 
-        .script-info {
+        .secondary-btn:hover {
+            color: #fff;
+            border-color: #373739;
+        }
+
+        .hero-symbol {
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            right: 30px;
+            top: 55px;
+            border-radius: 50%;
+            opacity: .09;
+            background: #fff;
+            box-shadow: 0 0 100px rgba(227, 19, 66, .1);
+            overflow: hidden;
+        }
+
+        .hero-symbol::before {
+            content: "";
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            left: 0;
+            background: #050505;
+        }
+
+        .hero-symbol::after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            top: 0;
+            left: 90px;
+            border-radius: 50%;
+            background: #050505;
+            box-shadow: 0 180px 0 #fff;
+        }
+
+        /* COMMUNITY */
+
+        .community {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 0 24px 20px;
+        }
+
+        .community-box {
+            position: relative;
+            overflow: hidden;
+            min-height: 155px;
+            padding: 27px 29px;
+            border-radius: 11px;
+            border: 1px solid #3b101c;
+            background: linear-gradient(105deg, #16090d 0%, #0e0a0c 48%, #0b0b0c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+        }
+
+        .community-box::after {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            right: -100px;
+            top: -100px;
+            border-radius: 50%;
+            border: 1px solid rgba(227, 19, 66, .09);
+            box-shadow:
+                0 0 0 40px rgba(227, 19, 66, .025),
+                0 0 0 80px rgba(227, 19, 66, .015);
+        }
+
+        .community-left {
+            position: relative;
+            z-index: 2;
+        }
+
+        .community-label {
+            color: #c91d43;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .community h2 {
+            margin: 8px 0 5px;
+            font-size: 22px;
+            letter-spacing: -.7px;
+        }
+
+        .community p {
+            margin: 0;
+            color: #777;
+            font-size: 12px;
+        }
+
+        .community-buttons {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .discord-btn {
+            height: 43px;
+            padding: 0 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            border-radius: 7px;
+            background: var(--red);
+            border: 1px solid var(--red);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            box-shadow: 0 8px 30px rgba(227, 19, 66, .17);
+            transition: .15s;
+        }
+
+        .discord-btn:hover {
+            background: var(--red-hover);
+            transform: translateY(-1px);
+        }
+
+        .youtube-btn {
+            height: 43px;
+            padding: 0 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 7px;
+            background: #0c0c0d;
+            border: 1px solid #29292b;
+            color: #aaa;
+            font-size: 12px;
+            font-weight: 750;
+            transition: .15s;
+        }
+
+        .youtube-btn:hover {
+            color: #fff;
+            border-color: #414143;
+        }
+
+        /* LIBRARY */
+
+        .library {
+            max-width: 1160px;
+            margin: auto;
+            padding: 60px 24px 90px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 19px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: -.5px;
+        }
+
+        .script-count {
+            padding: 4px 7px;
+            border-radius: 5px;
+            background: #111113;
+            border: 1px solid #1f1f21;
+            color: #666;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .search {
+            width: 240px;
+            height: 36px;
+            padding: 0 12px;
+            outline: none;
+            border-radius: 7px;
+            border: 1px solid #1c1c1e;
+            background: #0b0b0c;
+            color: #fff;
+            font-size: 11px;
+        }
+
+        .search:focus {
+            border-color: #43111f;
+        }
+
+        .search::placeholder {
+            color: #48484a;
+        }
+
+        #script-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .script-card {
+            border: 1px solid #1a1a1c;
+            border-radius: 9px;
+            background: #0b0b0c;
+            overflow: hidden;
+            transition: .15s;
+        }
+
+        .script-card:hover {
+            border-color: #2a2a2d;
+            transform: translateY(-1px);
+        }
+
+        .script-top {
+            padding: 16px 17px 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+        }
+
+        .game-icon {
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #111113;
+            border: 1px solid #252527;
+            color: #ddd;
+            transition: .15s;
+        }
+
+        .game-icon:hover {
+            background: #171719;
+            border-color: #3a3a3d;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .game-icon svg {
+            width: 21px;
+            height: 21px;
+            fill: currentColor;
+        }
+
+        .script-main {
             min-width: 0;
+            flex: 1;
+        }
+
+        .script-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .script-name {
             margin: 0;
-
             font-size: 14px;
-            font-weight: 700;
-
-            letter-spacing: -0.15px;
+            font-weight: 750;
+            letter-spacing: -.2px;
         }
 
-        .script-description {
-            margin-top: 6px;
+        .script-category {
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #c21b42;
+            background: #18090e;
+            border: 1px solid #2d1018;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: .8px;
+        }
 
-            color: #606060;
-
-            font-size: 12px;
+        .script-desc {
+            margin-top: 5px;
+            color: #626265;
+            font-size: 11px;
             line-height: 1.45;
         }
 
-        .tag {
-            flex-shrink: 0;
-
-            padding: 4px 7px;
-
-            border-radius: 5px;
-
-            background: #17090d;
-
-            border: 1px solid #2c1018;
-
-            color: #b91c3d;
-
-            font-size: 9px;
-            font-weight: 700;
-
-            letter-spacing: 0.7px;
-
-            text-transform: uppercase;
+        .game-link {
+            color: #8a8a8d;
+            transition: .15s;
         }
 
-        .code-wrap {
-            border-top: 1px solid #171717;
-            border-bottom: 1px solid #171717;
+        .game-link:hover {
+            color: #c9c9cc;
+        }
 
-            background: #080808;
+        .code {
+            border-top: 1px solid #171719;
+            border-bottom: 1px solid #171719;
+            background: #070708;
         }
 
         pre {
             margin: 0;
-
-            padding: 14px 16px;
-
-            min-height: 82px;
+            min-height: 92px;
             max-height: 230px;
-
+            padding: 14px 16px;
             overflow: auto;
-
-            color: #a9a9a9;
-
-            font-family:
-                "Cascadia Code",
-                "SFMono-Regular",
-                Consolas,
-                monospace;
-
-            font-size: 11px;
-            line-height: 1.6;
-
+            color: #a7a7aa;
+            font-family: "Cascadia Code", Consolas, monospace;
+            font-size: 10.5px;
+            line-height: 1.65;
             white-space: pre-wrap;
             word-break: break-word;
         }
@@ -406,112 +629,140 @@
             height: 5px;
         }
 
-        pre::-webkit-scrollbar-track {
-            background: #080808;
-        }
-
         pre::-webkit-scrollbar-thumb {
-            background: #252525;
+            background: #252527;
             border-radius: 10px;
         }
 
-        .actions {
+        .script-bottom {
             padding: 10px;
-
             display: flex;
             justify-content: flex-end;
         }
 
         .copy {
-            height: 31px;
-
+            height: 30px;
             padding: 0 12px;
-
             border-radius: 6px;
-
-            border: 1px solid #272727;
-
-            background: #151515;
-
-            color: #c8c8c8;
-
-            font-size: 11px;
-            font-weight: 600;
-
+            border: 1px solid #272729;
+            background: #111113;
+            color: #aaa;
             cursor: pointer;
-
-            transition:
-                background 0.12s ease,
-                border-color 0.12s ease,
-                color 0.12s ease;
+            font-size: 10px;
+            font-weight: 750;
+            transition: .15s;
         }
 
         .copy:hover {
-            background: #1b1b1b;
-            border-color: #363636;
-            color: white;
+            color: #fff;
+            border-color: #39393b;
+            background: #171719;
         }
 
         .copy.copied {
-            background: #250b12;
-            border-color: #591323;
-            color: #d62a50;
+            color: #ed3159;
+            border-color: #501322;
+            background: #19090e;
         }
 
         .empty {
             display: none;
-
-            padding: 50px 0;
-
+            padding: 55px;
             text-align: center;
-
-            color: #444;
-
+            color: #4b4b4e;
+            border: 1px dashed #1d1d1f;
+            border-radius: 9px;
             font-size: 12px;
         }
 
         footer {
-            margin-top: 30px;
-
-            color: #3d3d3d;
-
-            font-size: 10px;
-
+            padding: 0 24px 35px;
             text-align: center;
+            color: #3b3b3d;
+            font-size: 10px;
         }
 
-        @media (max-width: 720px) {
+        /* MOBILE */
 
-            header {
-                height: 64px;
-            }
-
-            .header-inner {
-                padding: 0 16px;
-            }
-
-            .header-right {
+        @media (max-width: 800px) {
+            .nav-links {
                 display: none;
             }
 
-            .socials {
-                margin-right: 0;
+            .nav-social a span {
+                display: none;
             }
 
-            .socials a {
-                padding: 6px 8px;
+            .hero {
+                padding-top: 60px;
             }
 
-            main {
-                padding: 38px 16px 60px;
+            .hero-symbol {
+                width: 260px;
+                height: 260px;
+                right: -80px;
+                top: 30px;
+                opacity: .055;
             }
 
-            .intro h1 {
-                font-size: 29px;
+            .community-box {
+                align-items: flex-start;
+                flex-direction: column;
             }
 
-            #scripts {
+            .community-buttons {
+                width: 100%;
+            }
+
+            .discord-btn,
+            .youtube-btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .section-head {
+                align-items: stretch;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .search {
+                width: 100%;
+            }
+
+            #script-list {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-social {
+                display: none;
+            }
+
+            .hero {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .community,
+            .library {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .primary-btn,
+            .secondary-btn {
+                width: 100%;
             }
         }
     </style>
@@ -519,29 +770,37 @@
 
 <body>
 
-<div class="background"></div>
+<div class="noise"></div>
+<div class="glow"></div>
 
-<header>
-    <div class="header-inner">
+<nav>
+    <div class="nav-inner">
 
-        <div class="brand">
+        <a href="#" class="brand">
+            <div class="yin"></div>
 
-            <div class="yin-yang"></div>
-
-            <div class="brand-name">
-                <span>YIN</span> / SCRIPTS
+            <div class="brand-text">
+                <span>YIN</span> SCRIPTS
             </div>
+        </a>
 
+        <div class="nav-links">
+            <a href="#script-library" class="nav-link">Scripts</a>
+            <a href="#community" class="nav-link">Community</a>
         </div>
 
-        <div class="socials">
+        <div class="nav-social">
 
             <a
                 href="https://discord.gg/3paKAgw6Pg"
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                Discord
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M19.54 5.13A16.06 16.06 0 0 0 15.56 4l-.5 1.02a14.8 14.8 0 0 0-4.12 0L10.44 4a16.1 16.1 0 0 0-3.98 1.13C3.94 8.82 3.25 12.4 3.6 15.93a16.3 16.3 0 0 0 4.9 2.48l1.18-1.61c-.65-.24-1.28-.54-1.88-.9l.46-.35c3.64 1.7 7.59 1.7 11.19 0l.47.35c-.6.36-1.23.66-1.88.9l1.18 1.61a16.3 16.3 0 0 0 4.9-2.48c.41-4.1-.7-7.65-3.58-10.8ZM8.92 14.8c-1.08 0-1.96-.99-1.96-2.2s.86-2.2 1.96-2.2c1.1 0 1.98.99 1.96 2.2 0 1.21-.86 2.2-1.96 2.2Zm6.16 0c-1.08 0-1.96-.99-1.96-2.2s.86-2.2 1.96-2.2c1.1 0 1.98.99 1.96 2.2 0 1.21-.86 2.2-1.96 2.2Z"/>
+                </svg>
+
+                <span>Discord</span>
             </a>
 
             <a
@@ -549,216 +808,330 @@
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                YouTube
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.8 31.8 0 0 0 0 12a31.8 31.8 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.8 31.8 0 0 0 24 12a31.8 31.8 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
+                </svg>
+
+                <span>YouTube</span>
+            </a>
+
+        </div>
+    </div>
+</nav>
+
+
+<section class="hero">
+
+    <div class="hero-symbol"></div>
+
+    <div class="hero-content">
+
+        <div class="eyebrow">
+            <span class="status-dot"></span>
+            Project Yin
+        </div>
+
+        <h1>
+            Roblox scripts.<br>
+            <span>Nothing else.</span>
+        </h1>
+
+        <p>
+            A clean collection of Project Yin scripts for Roblox.
+            Browse the library, find what you need, and copy it
+            without digging through old messages.
+        </p>
+
+        <div class="hero-actions">
+
+            <a href="#script-library" class="primary-btn">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M4 4h16v16H4V4Zm3 3v10h10V7H7Z"/>
+                </svg>
+
+                Browse Scripts
+            </a>
+
+            <a href="#community" class="secondary-btn">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-2h2v2Zm1.8-7.1-.9.9c-.7.7-.9 1.2-.9 2.2h-2c0-1.5.3-2.3 1.2-3.2l1.1-1.1c.3-.3.5-.7.5-1.2a1.8 1.8 0 0 0-3.6 0h-2a3.8 3.8 0 0 1 7.6 0c0 .9-.4 1.8-1 2.4Z"/>
+                </svg>
+
+                Join Us
             </a>
 
         </div>
 
-        <div class="header-right">
-            SCRIPT LIBRARY
-        </div>
-
     </div>
-</header>
+</section>
 
 
-<main>
+<section class="community" id="community">
 
-    <section class="intro">
+    <div class="community-box">
 
-        <div class="intro-small">
-            Project Yin
+        <div class="community-left">
+
+            <div class="community-label">
+                Project Yin Community
+            </div>
+
+            <h2>
+                Join the Discord.
+            </h2>
+
+            <p>
+                Updates, releases, support and everything Project Yin.
+            </p>
+
         </div>
 
-        <h1>Scripts</h1>
+        <div class="community-buttons">
 
-        <p>
-            Private collection of scripts and utilities.
-            Select a script and copy it directly.
-        </p>
+            <a
+                class="discord-btn"
+                href="https://discord.gg/3paKAgw6Pg"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M19.54 5.13A16.06 16.06 0 0 0 15.56 4l-.5 1.02a14.8 14.8 0 0 0-4.12 0L10.44 4a16.1 16.1 0 0 0-3.98 1.13C3.94 8.82 3.25 12.4 3.6 15.93a16.3 16.3 0 0 0 4.9 2.48l1.18-1.61c-.65-.24-1.28-.54-1.88-.9l.46-.35c3.64 1.7 7.59 1.7 11.19 0l.47.35c-.6.36-1.23.66-1.88.9l1.18 1.61a16.3 16.3 0 0 0 4.9-2.48c.41-4.1-.7-7.65-3.58-10.8ZM8.92 14.8c-1.08 0-1.96-.99-1.96-2.2s.86-2.2 1.96-2.2c1.1 0 1.98.99 1.96 2.2 0 1.21-.86 2.2-1.96 2.2Zm6.16 0c-1.08 0-1.96-.99-1.96-2.2-1.1 0-1.98.99-1.96 2.2 0 1.21.86 2.2 1.96 2.2Z"/>
+                </svg>
 
-    </section>
+                Join Discord
+            </a>
+
+            <a
+                class="youtube-btn"
+                href="https://youtube.com/@project_yin"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.8 31.8 0 0 0 0 12a31.8 31.8 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.8 31.8 0 0 0 24 12a31.8 31.8 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
+                </svg>
+
+                YouTube
+            </a>
+
+        </div>
+    </div>
+</section>
 
 
-    <div class="search-wrap">
+<section class="library" id="script-library">
 
-        <span class="search-icon">⌕</span>
+    <div class="section-head">
+
+        <div class="section-title">
+
+            <h2>
+                Script Library
+            </h2>
+
+            <span class="script-count" id="script-count">
+                0
+            </span>
+
+        </div>
 
         <input
-            id="search"
             class="search"
-            type="text"
+            id="search"
+            type="search"
             placeholder="Search scripts..."
             autocomplete="off"
         >
 
     </div>
 
+    <div id="script-list"></div>
 
-    <section id="scripts"></section>
-
-    <div id="empty" class="empty">
+    <div class="empty" id="empty">
         No scripts found.
     </div>
 
+</section>
 
-    <footer>
-        Yin Script Library
-    </footer>
 
-</main>
+<footer>
+    Project Yin · Roblox Script Library
+</footer>
 
 
 <script>
 
+const scriptList = document.getElementById("script-list");
+const search = document.getElementById("search");
+const empty = document.getElementById("empty");
+const count = document.getElementById("script-count");
+
 let scripts = [];
 
-const container =
-    document.getElementById("scripts");
 
-const search =
-    document.getElementById("search");
-
-const empty =
-    document.getElementById("empty");
+function robloxIcon() {
+    return `
+        <svg viewBox="0 0 24 24">
+            <path d="m6.4 2.5 15.1 4.7-4.1 14.3-15-4.7L6.4 2.5Zm2.4 6.1-1.3 4.6 4.7 1.4 1.3-4.5-4.7-1.5Z"/>
+        </svg>
+    `;
+}
 
 
 function escapeHTML(value) {
-
     return String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
 }
 
 
 function render() {
 
     const query =
-        search.value
-            .trim()
-            .toLowerCase();
-
+        search.value.trim().toLowerCase();
 
     const filtered =
         scripts.filter(script => {
 
-            const text = `
-                ${script.name}
-                ${script.category}
-                ${script.description}
-                ${script.code}
-            `.toLowerCase();
+            const searchable = [
+                script.name,
+                script.category,
+                script.game,
+                script.description,
+                script.code
+            ]
+            .join(" ")
+            .toLowerCase();
 
-            return text.includes(query);
-
+            return searchable.includes(query);
         });
 
 
-    container.innerHTML = "";
+    count.textContent = filtered.length;
+
+    scriptList.innerHTML = "";
 
 
     filtered.forEach(script => {
 
-        const card =
-            document.createElement("article");
+        const card = document.createElement("article");
 
-        card.className = "script";
+        card.className = "script-card";
+
+
+        const gameUrl =
+            script.gameUrl || "#";
 
 
         card.innerHTML = `
 
-            <div class="script-head">
+            <div class="script-top">
 
-                <div class="script-info">
+                <a
+                    class="game-icon"
+                    href="${escapeHTML(gameUrl)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Open ${escapeHTML(script.game || "Roblox")} on Roblox"
+                >
+                    ${robloxIcon()}
+                </a>
 
-                    <h2 class="script-name">
-                        ${escapeHTML(script.name)}
-                    </h2>
 
-                    <div class="script-description">
-                        ${escapeHTML(script.description || "")}
+                <div class="script-main">
+
+                    <div class="script-name-row">
+
+                        <h3 class="script-name">
+                            ${escapeHTML(script.name)}
+                        </h3>
+
+                        <span class="script-category">
+                            ${escapeHTML(script.category || "ROBLOX")}
+                        </span>
+
                     </div>
 
-                </div>
 
-                <div class="tag">
-                    ${escapeHTML(script.category || "SCRIPT")}
+                    <div class="script-desc">
+
+                        <a
+                            class="game-link"
+                            href="${escapeHTML(gameUrl)}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            ${escapeHTML(script.game || "Roblox")}
+                        </a>
+
+                        ·
+
+                        ${escapeHTML(script.description || "")}
+
+                    </div>
+
                 </div>
 
             </div>
 
 
-            <div class="code-wrap">
+            <div class="code">
 
                 <pre>${escapeHTML(script.code)}</pre>
 
             </div>
 
 
-            <div class="actions">
+            <div class="script-bottom">
 
                 <button class="copy">
-                    Copy
+                    Copy Script
                 </button>
 
             </div>
-
         `;
 
 
-        const button =
+        const copy =
             card.querySelector(".copy");
 
 
-        button.addEventListener(
-            "click",
-            async () => {
+        copy.addEventListener("click", async () => {
 
-                try {
+            try {
 
-                    await navigator.clipboard.writeText(
-                        script.code
-                    );
+                await navigator.clipboard.writeText(
+                    script.code
+                );
 
-                    button.textContent = "Copied";
-
-                    button.classList.add(
-                        "copied"
-                    );
+                copy.textContent = "Copied";
+                copy.classList.add("copied");
 
 
-                    setTimeout(() => {
+                setTimeout(() => {
 
-                        button.textContent = "Copy";
+                    copy.textContent = "Copy Script";
+                    copy.classList.remove("copied");
 
-                        button.classList.remove(
-                            "copied"
-                        );
+                }, 1000);
 
-                    }, 1000);
+            } catch {
 
+                copy.textContent = "Copy failed";
 
-                } catch {
-
-                    button.textContent = "Failed";
-
-                    setTimeout(() => {
-
-                        button.textContent = "Copy";
-
-                    }, 1000);
-
-                }
+                setTimeout(() => {
+                    copy.textContent = "Copy Script";
+                }, 1000);
 
             }
-        );
+
+        });
 
 
-        container.appendChild(card);
+        scriptList.appendChild(card);
 
     });
 
@@ -767,25 +1140,17 @@ function render() {
         filtered.length === 0
             ? "block"
             : "none";
-
 }
 
 
-search.addEventListener(
-    "input",
-    render
-);
+search.addEventListener("input", render);
 
 
 fetch("scripts.json")
     .then(response => {
 
         if (!response.ok) {
-
-            throw new Error(
-                "Could not load scripts.json"
-            );
-
+            throw new Error("scripts.json could not be loaded.");
         }
 
         return response.json();
@@ -793,20 +1158,19 @@ fetch("scripts.json")
     })
     .then(data => {
 
-        scripts = Array.isArray(data)
-            ? data
-            : [];
+        scripts =
+            Array.isArray(data)
+                ? data
+                : [];
 
         render();
 
     })
     .catch(error => {
 
-        container.innerHTML = "";
+        scriptList.innerHTML = "";
 
-        empty.textContent =
-            error.message;
-
+        empty.textContent = error.message;
         empty.style.display = "block";
 
     });
