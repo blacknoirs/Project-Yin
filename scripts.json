@@ -1,20 +1,40 @@
 [
-    {
-        "id": "tsb-alt-farm",
-        "name": "TSB Alt Farm",
-        "category": "TSB",
-        "game": "The Strongest Battlegrounds",
-        "gameUrl": "https://www.roblox.com/games/10449761463/The-Strongest-Battlegrounds",
-        "description": "Alt farming with configurable main and alternate accounts.",
-        "code": "getgenv().MAIN_ACCOUNT_NAME = \"mainacc\"\ngetgenv().ALT_ACCOUNTS = {\n    \"altacc1\",\n    \"altacc2\"\n}\n\nloadstring(game:HttpGet(\"https://gitlab.com/unauthorized/projectyin/-/raw/main/yinaltfarm\"))()"
-    },
-    {
-        "id": "tsb-public-farm",
-        "name": "TSB Public Farm",
-        "category": "TSB",
-        "game": "The Strongest Battlegrounds",
-        "gameUrl": "https://www.roblox.com/games/10449761463/The-Strongest-Battlegrounds",
-        "description": "Public farming script.",
-        "code": "loadstring(game:HttpGet(\"https://gitlab.com/unauthorized/projectyin/-/raw/main/farm\"))()"
-    }
+  {
+    "id": "tsb-alt-farm",
+    "name": "TSB Alt Farm",
+    "game": "The Strongest Battlegrounds",
+    "category": "Farming",
+    "version": "3.0.0",
+    "status": "Working",
+    "featured": true,
+    "author": "Project Yin",
+    "updated": "2026-08-21",
+    "description": "Alt farming utility for The Strongest Battlegrounds.",
+    "tags": [
+      "TSB",
+      "Alt Farm",
+      "Farming"
+    ],
+    "gameUrl": "https://www.roblox.com/games/10449761463/The-Strongest-Battlegrounds",
+    "code": "getgenv().MAIN_ACCOUNT_NAME = \"mainacc\"\ngetgenv().ALT_ACCOUNTS = {\n    \"altacc1\",\n    \"altacc2\"\n}\n\nloadstring(game:HttpGet(\"https://gitlab.com/unauthorized/projectyin/-/raw/main/yinaltfarm\"))()"
+  },
+  {
+    "id": "tsb-public-farm",
+    "name": "TSB Public Farm",
+    "game": "The Strongest Battlegrounds",
+    "category": "Farming",
+    "version": "1.0.0",
+    "status": "Working",
+    "featured": true,
+    "author": "Project Yin",
+    "updated": "2026-08-21",
+    "description": "Public farming script for The Strongest Battlegrounds.",
+    "tags": [
+      "TSB",
+      "Public Farm",
+      "Farming"
+    ],
+    "gameUrl": "https://www.roblox.com/games/10449761463/The-Strongest-Battlegrounds",
+    "code": "loadstring(game:HttpGet(\"https://gitlab.com/unauthorized/projectyin/-/raw/main/farm\"))()"
+  }
 ]
