@@ -1,1179 +1,1665 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Yin</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #060606;
-            --panel: #0c0c0d;
-            --panel-hover: #101011;
-            --border: #1c1c1e;
-            --border-hover: #303033;
-            --red: #e31342;
-            --red-hover: #f0194b;
-            --red-dark: #17070c;
-            --text: #f3f3f3;
-            --muted: #77777b;
-            --muted2: #4c4c50;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            overflow-x: hidden;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        button,
-        input {
-            font: inherit;
-        }
-
-        ::selection {
-            background: var(--red);
-            color: #fff;
-        }
-
-        /* BACKGROUND */
-
-        .noise {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            pointer-events: none;
-            opacity: .025;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
-        }
-
-        .glow {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            top: -300px;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none;
-            background: rgba(190, 0, 45, .08);
-            filter: blur(120px);
-        }
-
-        /* NAVBAR */
-
-        nav {
-            height: 70px;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            border-bottom: 1px solid #171719;
-            background: rgba(6, 6, 6, .84);
-            backdrop-filter: blur(18px);
-        }
-
-        .nav-inner {
-            max-width: 1160px;
-            height: 100%;
-            margin: auto;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-        }
-
-        .yin {
-            width: 32px;
-            height: 32px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 50%;
-            background: #fff;
-            box-shadow:
-                0 0 0 1px #353535,
-                0 0 28px rgba(227, 19, 66, .12);
-        }
-
-        .yin::before {
-            content: "";
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            left: 0;
-            top: 0;
-            background: #080808;
-        }
-
-        .yin::after {
-            content: "";
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            left: 8px;
-            top: 0;
-            border-radius: 50%;
-            background: #080808;
-            box-shadow: 0 16px 0 #fff;
-        }
-
-        .brand-text {
-            font-size: 14px;
-            font-weight: 800;
-            letter-spacing: .3px;
-        }
-
-        .brand-text span {
-            color: var(--red);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-left: 35px;
-        }
-
-        .nav-link {
-            padding: 8px 11px;
-            color: #666;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 6px;
-            transition: .15s;
-        }
-
-        .nav-link:hover {
-            color: #ddd;
-            background: #101011;
-        }
-
-        .nav-social {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .nav-social a {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            padding: 8px 11px;
-            border: 1px solid #202022;
-            border-radius: 7px;
-            color: #aaa;
-            font-size: 11px;
-            font-weight: 700;
-            background: #0b0b0c;
-            transition: .15s;
-        }
-
-        .nav-social a:hover {
-            color: #fff;
-            border-color: #39393b;
-            background: #111113;
-        }
-
-        .icon {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
-            flex-shrink: 0;
-        }
-
-        /* HERO */
-
-        .hero {
-            max-width: 1160px;
-            margin: auto;
-            padding: 85px 24px 65px;
-            position: relative;
-        }
-
-        .hero-content {
-            max-width: 690px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 9px;
-            border: 1px solid #35101b;
-            border-radius: 6px;
-            background: rgba(100, 0, 25, .12);
-            color: #c3294c;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--red);
-            box-shadow: 0 0 10px var(--red);
-        }
-
-        .hero h1 {
-            margin: 19px 0 0;
-            font-size: clamp(48px, 7vw, 78px);
-            line-height: .98;
-            letter-spacing: -4px;
-            font-weight: 850;
-        }
-
-        .hero h1 span {
-            color: var(--red);
-        }
-
-        .hero p {
-            max-width: 570px;
-            margin: 19px 0 0;
-            color: #777;
-            font-size: 14px;
-            line-height: 1.7;
-        }
-
-        .hero-actions {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            margin-top: 28px;
-        }
-
-        .primary-btn,
-        .secondary-btn {
-            height: 42px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 0 15px;
-            border-radius: 7px;
-            font-size: 12px;
-            font-weight: 750;
-            cursor: pointer;
-            transition: .15s;
-        }
-
-        .primary-btn {
-            color: #fff;
-            background: var(--red);
-            border: 1px solid var(--red);
-            box-shadow: 0 7px 25px rgba(227, 19, 66, .15);
-        }
-
-        .primary-btn:hover {
-            background: var(--red-hover);
-            border-color: var(--red-hover);
-            transform: translateY(-1px);
-        }
-
-        .secondary-btn {
-            color: #aaa;
-            background: #0d0d0e;
-            border: 1px solid #242426;
-        }
-
-        .secondary-btn:hover {
-            color: #fff;
-            border-color: #373739;
-        }
-
-        .hero-symbol {
-            position: absolute;
-            width: 360px;
-            height: 360px;
-            right: 30px;
-            top: 55px;
-            border-radius: 50%;
-            opacity: .09;
-            background: #fff;
-            box-shadow: 0 0 100px rgba(227, 19, 66, .1);
-            overflow: hidden;
-        }
-
-        .hero-symbol::before {
-            content: "";
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            left: 0;
-            background: #050505;
-        }
-
-        .hero-symbol::after {
-            content: "";
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            top: 0;
-            left: 90px;
-            border-radius: 50%;
-            background: #050505;
-            box-shadow: 0 180px 0 #fff;
-        }
-
-        /* COMMUNITY */
-
-        .community {
-            max-width: 1160px;
-            margin: 0 auto;
-            padding: 0 24px 20px;
-        }
-
-        .community-box {
-            position: relative;
-            overflow: hidden;
-            min-height: 155px;
-            padding: 27px 29px;
-            border-radius: 11px;
-            border: 1px solid #3b101c;
-            background: linear-gradient(105deg, #16090d 0%, #0e0a0c 48%, #0b0b0c 100%);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 25px;
-        }
-
-        .community-box::after {
-            content: "";
-            position: absolute;
-            width: 280px;
-            height: 280px;
-            right: -100px;
-            top: -100px;
-            border-radius: 50%;
-            border: 1px solid rgba(227, 19, 66, .09);
-            box-shadow:
-                0 0 0 40px rgba(227, 19, 66, .025),
-                0 0 0 80px rgba(227, 19, 66, .015);
-        }
-
-        .community-left {
-            position: relative;
-            z-index: 2;
-        }
-
-        .community-label {
-            color: #c91d43;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        .community h2 {
-            margin: 8px 0 5px;
-            font-size: 22px;
-            letter-spacing: -.7px;
-        }
-
-        .community p {
-            margin: 0;
-            color: #777;
-            font-size: 12px;
-        }
-
-        .community-buttons {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .discord-btn {
-            height: 43px;
-            padding: 0 16px;
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-            border-radius: 7px;
-            background: var(--red);
-            border: 1px solid var(--red);
-            color: #fff;
-            font-size: 12px;
-            font-weight: 800;
-            box-shadow: 0 8px 30px rgba(227, 19, 66, .17);
-            transition: .15s;
-        }
-
-        .discord-btn:hover {
-            background: var(--red-hover);
-            transform: translateY(-1px);
-        }
-
-        .youtube-btn {
-            height: 43px;
-            padding: 0 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border-radius: 7px;
-            background: #0c0c0d;
-            border: 1px solid #29292b;
-            color: #aaa;
-            font-size: 12px;
-            font-weight: 750;
-            transition: .15s;
-        }
-
-        .youtube-btn:hover {
-            color: #fff;
-            border-color: #414143;
-        }
-
-        /* LIBRARY */
-
-        .library {
-            max-width: 1160px;
-            margin: auto;
-            padding: 60px 24px 90px;
-        }
-
-        .section-head {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            margin-bottom: 19px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title h2 {
-            margin: 0;
-            font-size: 20px;
-            letter-spacing: -.5px;
-        }
-
-        .script-count {
-            padding: 4px 7px;
-            border-radius: 5px;
-            background: #111113;
-            border: 1px solid #1f1f21;
-            color: #666;
-            font-size: 9px;
-            font-weight: 800;
-        }
-
-        .search {
-            width: 240px;
-            height: 36px;
-            padding: 0 12px;
-            outline: none;
-            border-radius: 7px;
-            border: 1px solid #1c1c1e;
-            background: #0b0b0c;
-            color: #fff;
-            font-size: 11px;
-        }
-
-        .search:focus {
-            border-color: #43111f;
-        }
-
-        .search::placeholder {
-            color: #48484a;
-        }
-
-        #script-list {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .script-card {
-            border: 1px solid #1a1a1c;
-            border-radius: 9px;
-            background: #0b0b0c;
-            overflow: hidden;
-            transition: .15s;
-        }
-
-        .script-card:hover {
-            border-color: #2a2a2d;
-            transform: translateY(-1px);
-        }
-
-        .script-top {
-            padding: 16px 17px 14px;
-            display: flex;
-            align-items: flex-start;
-            gap: 13px;
-        }
-
-        .game-icon {
-            width: 39px;
-            height: 39px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            background: #111113;
-            border: 1px solid #252527;
-            color: #ddd;
-            transition: .15s;
-        }
-
-        .game-icon:hover {
-            background: #171719;
-            border-color: #3a3a3d;
-            color: #fff;
-            transform: translateY(-1px);
-        }
-
-        .game-icon svg {
-            width: 21px;
-            height: 21px;
-            fill: currentColor;
-        }
-
-        .script-main {
-            min-width: 0;
-            flex: 1;
-        }
-
-        .script-name-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .script-name {
-            margin: 0;
-            font-size: 14px;
-            font-weight: 750;
-            letter-spacing: -.2px;
-        }
-
-        .script-category {
-            padding: 3px 6px;
-            border-radius: 4px;
-            color: #c21b42;
-            background: #18090e;
-            border: 1px solid #2d1018;
-            font-size: 8px;
-            font-weight: 800;
-            letter-spacing: .8px;
-        }
-
-        .script-desc {
-            margin-top: 5px;
-            color: #626265;
-            font-size: 11px;
-            line-height: 1.45;
-        }
-
-        .game-link {
-            color: #8a8a8d;
-            transition: .15s;
-        }
-
-        .game-link:hover {
-            color: #c9c9cc;
-        }
-
-        .code {
-            border-top: 1px solid #171719;
-            border-bottom: 1px solid #171719;
-            background: #070708;
-        }
-
-        pre {
-            margin: 0;
-            min-height: 92px;
-            max-height: 230px;
-            padding: 14px 16px;
-            overflow: auto;
-            color: #a7a7aa;
-            font-family: "Cascadia Code", Consolas, monospace;
-            font-size: 10.5px;
-            line-height: 1.65;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        pre::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-        }
-
-        pre::-webkit-scrollbar-thumb {
-            background: #252527;
-            border-radius: 10px;
-        }
-
-        .script-bottom {
-            padding: 10px;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .copy {
-            height: 30px;
-            padding: 0 12px;
-            border-radius: 6px;
-            border: 1px solid #272729;
-            background: #111113;
-            color: #aaa;
-            cursor: pointer;
-            font-size: 10px;
-            font-weight: 750;
-            transition: .15s;
-        }
-
-        .copy:hover {
-            color: #fff;
-            border-color: #39393b;
-            background: #171719;
-        }
-
-        .copy.copied {
-            color: #ed3159;
-            border-color: #501322;
-            background: #19090e;
-        }
-
-        .empty {
-            display: none;
-            padding: 55px;
-            text-align: center;
-            color: #4b4b4e;
-            border: 1px dashed #1d1d1f;
-            border-radius: 9px;
-            font-size: 12px;
-        }
-
-        footer {
-            padding: 0 24px 35px;
-            text-align: center;
-            color: #3b3b3d;
-            font-size: 10px;
-        }
-
-        /* MOBILE */
-
-        @media (max-width: 800px) {
-            .nav-links {
-                display: none;
-            }
-
-            .nav-social a span {
-                display: none;
-            }
-
-            .hero {
-                padding-top: 60px;
-            }
-
-            .hero-symbol {
-                width: 260px;
-                height: 260px;
-                right: -80px;
-                top: 30px;
-                opacity: .055;
-            }
-
-            .community-box {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .community-buttons {
-                width: 100%;
-            }
-
-            .discord-btn,
-            .youtube-btn {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .section-head {
-                align-items: stretch;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .search {
-                width: 100%;
-            }
-
-            #script-list {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .nav-social {
-                display: none;
-            }
-
-            .hero {
-                padding-left: 18px;
-                padding-right: 18px;
-            }
-
-            .community,
-            .library {
-                padding-left: 18px;
-                padding-right: 18px;
-            }
-
-            .hero h1 {
-                font-size: 48px;
-            }
-
-            .hero-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .primary-btn,
-            .secondary-btn {
-                width: 100%;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Yin — Script Library</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+:root{
+    --bg:#050505;
+    --bg2:#080808;
+    --panel:#0b0b0c;
+    --panel2:#0e0e10;
+    --line:#1b1b1e;
+    --line2:#29292d;
+    --text:#f2f2f3;
+    --muted:#77777c;
+    --muted2:#4e4e53;
+    --red:#e51b48;
+    --red2:#ff2453;
+    --redbg:#19080e;
+}
+
+body{
+    margin:0;
+    background:
+        radial-gradient(circle at 80% -10%,rgba(229,27,72,.08),transparent 28%),
+        radial-gradient(circle at 10% 30%,rgba(229,27,72,.035),transparent 25%),
+        var(--bg);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}
+button{cursor:pointer}
+
+body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.018;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    z-index:999;
+}
+
+/* NAV */
+
+.nav{
+    height:68px;
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(5,5,5,.86);
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(20px);
+}
+
+.nav-inner{
+    max-width:1240px;
+    height:100%;
+    margin:auto;
+    padding:0 22px;
+    display:flex;
+    align-items:center;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
+    font-weight:850;
+    letter-spacing:.4px;
+}
+
+.logo-mark{
+    width:31px;
+    height:31px;
+    border-radius:50%;
+    position:relative;
+    overflow:hidden;
+    background:#fff;
+    box-shadow:0 0 0 1px #333;
+}
+
+.logo-mark:before{
+    content:"";
+    position:absolute;
+    width:50%;
+    height:100%;
+    left:0;
+    background:#050505;
+}
+
+.logo-mark:after{
+    content:"";
+    position:absolute;
+    width:15px;
+    height:15px;
+    left:8px;
+    top:0;
+    border-radius:50%;
+    background:#050505;
+    box-shadow:0 15px 0 #fff;
+}
+
+.logo span{color:var(--red)}
+
+.nav-menu{
+    margin-left:35px;
+    display:flex;
+    gap:3px;
+}
+
+.nav-menu a{
+    padding:8px 11px;
+    color:#666;
+    font-size:11px;
+    font-weight:700;
+    border-radius:6px;
+}
+
+.nav-menu a:hover{
+    color:#ddd;
+    background:#101011;
+}
+
+.nav-right{
+    margin-left:auto;
+    display:flex;
+    gap:7px;
+}
+
+.nav-btn{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    height:34px;
+    padding:0 11px;
+    color:#aaa;
+    background:#0b0b0c;
+    border:1px solid #202023;
+    border-radius:6px;
+    font-size:10px;
+    font-weight:800;
+}
+
+.nav-btn:hover{
+    color:white;
+    border-color:#3a3a3e;
+}
+
+.svg{
+    width:14px;
+    height:14px;
+    fill:currentColor;
+}
+
+/* LAYOUT */
+
+.layout{
+    max-width:1240px;
+    margin:auto;
+    padding:0 22px;
+    display:grid;
+    grid-template-columns:205px 1fr;
+    gap:28px;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    position:sticky;
+    top:92px;
+    align-self:start;
+    padding-top:28px;
+}
+
+.side-title{
+    margin:0 0 10px;
+    color:#454549;
+    font-size:9px;
+    font-weight:850;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+}
+
+.side-link{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:9px 10px;
+    margin-bottom:2px;
+    border-radius:6px;
+    color:#737378;
+    font-size:11px;
+    font-weight:650;
+    transition:.15s;
+}
+
+.side-link:hover,
+.side-link.active{
+    color:#eee;
+    background:#101012;
+}
+
+.side-count{
+    min-width:19px;
+    padding:2px 5px;
+    text-align:center;
+    border-radius:4px;
+    color:#666;
+    background:#151517;
+    font-size:8px;
+}
+
+.side-divider{
+    height:1px;
+    background:var(--line);
+    margin:20px 0;
+}
+
+.side-small{
+    color:#4d4d51;
+    font-size:9px;
+    line-height:1.6;
+}
+
+/* MAIN */
+
+.main{
+    min-width:0;
+}
+
+/* HERO */
+
+.hero{
+    padding:65px 0 42px;
+    position:relative;
+}
+
+.hero-kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:5px 8px;
+    color:#d0224b;
+    background:var(--redbg);
+    border:1px solid #3b101d;
+    border-radius:5px;
+    font-size:9px;
+    font-weight:850;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+}
+
+.dot{
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 9px var(--red);
+}
+
+.hero h1{
+    max-width:760px;
+    margin:17px 0 12px;
+    font-size:clamp(43px,6vw,70px);
+    line-height:1;
+    letter-spacing:-3.5px;
+}
+
+.hero h1 span{color:var(--red)}
+
+.hero p{
+    max-width:590px;
+    margin:0;
+    color:#6c6c71;
+    font-size:13px;
+    line-height:1.7;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:8px;
+    margin-top:23px;
+}
+
+.btn{
+    height:40px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:0 14px;
+    border-radius:6px;
+    font-size:10px;
+    font-weight:800;
+    transition:.15s;
+}
+
+.btn-red{
+    background:var(--red);
+    border:1px solid var(--red);
+    color:white;
+}
+
+.btn-red:hover{
+    background:var(--red2);
+    transform:translateY(-1px);
+}
+
+.btn-dark{
+    color:#aaa;
+    background:#0c0c0d;
+    border:1px solid #242427;
+}
+
+.btn-dark:hover{
+    color:white;
+    border-color:#3a3a3e;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-bottom:32px;
+}
+
+.stat{
+    padding:15px;
+    background:#09090a;
+    border:1px solid var(--line);
+    border-radius:7px;
+}
+
+.stat-number{
+    font-size:20px;
+    font-weight:850;
+    letter-spacing:-.7px;
+}
+
+.stat-label{
+    margin-top:3px;
+    color:#55555a;
+    font-size:9px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+}
+
+/* SECTION */
+
+.section{
+    margin-bottom:48px;
+}
+
+.section-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:14px;
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.section-title h2{
+    margin:0;
+    font-size:17px;
+    letter-spacing:-.4px;
+}
+
+.section-sub{
+    margin:4px 0 0;
+    color:#55555a;
+    font-size:10px;
+}
+
+.badge{
+    padding:4px 7px;
+    color:#777;
+    background:#111113;
+    border:1px solid #202023;
+    border-radius:4px;
+    font-size:8px;
+    font-weight:800;
+}
+
+/* FEATURED */
+
+.featured{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.feature{
+    min-height:180px;
+    padding:19px;
+    position:relative;
+    overflow:hidden;
+    border:1px solid #252126;
+    border-radius:8px;
+    background:
+        radial-gradient(circle at 100% 0,rgba(229,27,72,.09),transparent 40%),
+        #0b0b0c;
+}
+
+.feature:hover{
+    border-color:#47202b;
+}
+
+.feature-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.feature-game{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.feature-icon{
+    width:35px;
+    height:35px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:7px;
+    color:#ddd;
+    background:#121214;
+    border:1px solid #29292c;
+}
+
+.feature-name{
+    font-size:13px;
+    font-weight:800;
+}
+
+.feature-game-name{
+    margin-top:3px;
+    color:#55555a;
+    font-size:9px;
+}
+
+.feature h3{
+    margin:22px 0 6px;
+    font-size:18px;
+    letter-spacing:-.5px;
+}
+
+.feature p{
+    margin:0;
+    color:#66666b;
+    font-size:10px;
+    line-height:1.5;
+}
+
+.feature-bottom{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:18px;
+}
+
+.feature-tags{
+    display:flex;
+    gap:4px;
+}
+
+.tag{
+    padding:4px 6px;
+    color:#777;
+    background:#111113;
+    border:1px solid #202023;
+    border-radius:4px;
+    font-size:8px;
+    font-weight:750;
+}
+
+.open-btn{
+    padding:7px 10px;
+    border:1px solid #2b2b2e;
+    border-radius:5px;
+    background:#111113;
+    color:#aaa;
+    font-size:9px;
+    font-weight:800;
+}
+
+.open-btn:hover{
+    color:white;
+}
+
+/* GAMES */
+
+.games{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+
+.game{
+    padding:14px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    background:#09090a;
+    transition:.15s;
+}
+
+.game:hover{
+    border-color:#303034;
+    background:#0c0c0d;
+}
+
+.game-top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.game-icon{
+    width:35px;
+    height:35px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:7px;
+    background:#111113;
+    border:1px solid #252528;
+    color:#ddd;
+    flex-shrink:0;
+}
+
+.game-name{
+    font-size:11px;
+    font-weight:800;
+}
+
+.game-count{
+    margin-top:3px;
+    color:#55555a;
+    font-size:8px;
+}
+
+.game-link{
+    display:block;
+    margin-top:11px;
+    color:#777;
+    font-size:9px;
+}
+
+.game-link:hover{color:var(--red)}
+
+/* SEARCH */
+
+.library-tools{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.search{
+    width:220px;
+    height:34px;
+    padding:0 11px;
+    color:white;
+    background:#0a0a0b;
+    border:1px solid #202023;
+    border-radius:6px;
+    outline:none;
+    font-size:10px;
+}
+
+.search:focus{
+    border-color:#4a1523;
+}
+
+.search::placeholder{color:#454549}
+
+.filter{
+    height:34px;
+    padding:0 9px;
+    color:#777;
+    background:#0a0a0b;
+    border:1px solid #202023;
+    border-radius:6px;
+    outline:none;
+    font-size:9px;
+}
+
+/* SCRIPT GRID */
+
+.scripts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.script{
+    overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#09090a;
+    transition:.15s;
+}
+
+.script:hover{
+    border-color:#2c2c30;
+    transform:translateY(-1px);
+}
+
+.script-head{
+    padding:14px;
+    display:flex;
+    gap:11px;
+}
+
+.script-icon{
+    width:37px;
+    height:37px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    color:#ddd;
+    background:#111113;
+    border:1px solid #252528;
+    border-radius:7px;
+}
+
+.script-info{
+    min-width:0;
+}
+
+.script-name{
+    margin:0;
+    font-size:12px;
+    font-weight:800;
+}
+
+.script-game{
+    margin-top:3px;
+    color:#55555a;
+    font-size:9px;
+}
+
+.script-description{
+    margin-top:7px;
+    color:#66666b;
+    font-size:9px;
+    line-height:1.45;
+}
+
+.script-labels{
+    display:flex;
+    gap:4px;
+    margin-top:8px;
+}
+
+.script-label{
+    padding:3px 5px;
+    border-radius:3px;
+    color:#777;
+    background:#111113;
+    border:1px solid #202023;
+    font-size:7px;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.code{
+    border-top:1px solid #171719;
+    border-bottom:1px solid #171719;
+    background:#060607;
+}
+
+pre{
+    margin:0;
+    min-height:85px;
+    max-height:180px;
+    padding:13px;
+    overflow:auto;
+    color:#aaa;
+    font:10px/1.65 "Cascadia Code",Consolas,monospace;
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+
+.script-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:9px;
+}
+
+.roblox-open{
+    color:#555;
+    font-size:8px;
+}
+
+.roblox-open:hover{color:#aaa}
+
+.copy{
+    height:29px;
+    padding:0 11px;
+    border-radius:5px;
+    color:#aaa;
+    background:#111113;
+    border:1px solid #28282b;
+    font-size:9px;
+    font-weight:800;
+}
+
+.copy:hover{
+    color:white;
+    border-color:#3a3a3e;
+}
+
+.copy.copied{
+    color:#ed2853;
+    border-color:#531324;
+}
+
+/* COMMUNITY */
+
+.community{
+    padding:20px;
+    border:1px solid #35121e;
+    border-radius:8px;
+    background:
+        radial-gradient(circle at 100% 50%,rgba(229,27,72,.08),transparent 35%),
+        #0d080a;
+}
+
+.community-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.community-label{
+    color:#c71b44;
+    font-size:8px;
+    font-weight:850;
+    letter-spacing:1.4px;
+    text-transform:uppercase;
+}
+
+.community h2{
+    margin:7px 0 4px;
+    font-size:18px;
+}
+
+.community p{
+    margin:0;
+    color:#666;
+    font-size:10px;
+}
+
+.community-actions{
+    display:flex;
+    gap:7px;
+}
+
+/* FOOTER */
+
+footer{
+    max-width:1240px;
+    margin:auto;
+    padding:30px 22px 40px;
+    border-top:1px solid var(--line);
+    color:#414145;
+    font-size:9px;
+}
+
+.footer-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.footer-links{
+    display:flex;
+    gap:15px;
+}
+
+.footer-links a:hover{color:#aaa}
+
+/* RESPONSIVE */
+
+@media(max-width:950px){
+
+    .layout{
+        display:block;
+    }
+
+    .sidebar{
+        display:none;
+    }
+
+    .featured,
+    .scripts{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .nav-menu{
+        display:none;
+    }
+
+    .nav-right .nav-btn span{
+        display:none;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .games{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .library-tools{
+        width:100%;
+    }
+
+    .search{
+        flex:1;
+        width:auto;
+    }
+
+    .community-inner{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .community-actions{
+        width:100%;
+    }
+
+    .community-actions .btn{
+        flex:1;
+    }
+
+}
+
+@media(max-width:480px){
+
+    .layout,
+    .nav-inner{
+        padding-left:15px;
+        padding-right:15px;
+    }
+
+    .hero{
+        padding-top:45px;
+    }
+
+    .hero h1{
+        letter-spacing:-2.5px;
+    }
+
+    .games{
+        grid-template-columns:1fr;
+    }
+
+    .hero-buttons{
+        flex-direction:column;
+    }
+
+    .hero-buttons .btn{
+        width:100%;
+    }
+
+    .section-head{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .library-tools{
+        width:100%;
+    }
+
+    .footer-inner{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:12px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-<div class="noise"></div>
-<div class="glow"></div>
+<nav class="nav">
+<div class="nav-inner">
 
-<nav>
-    <div class="nav-inner">
+<a href="#" class="logo">
+    <div class="logo-mark"></div>
+    <div><span>PROJECT</span> YIN</div>
+</a>
 
-        <a href="#" class="brand">
-            <div class="yin"></div>
+<div class="nav-menu">
+    <a href="#home">Home</a>
+    <a href="#games">Games</a>
+    <a href="#scripts">Scripts</a>
+    <a href="#community">Community</a>
+</div>
 
-            <div class="brand-text">
-                <span>YIN</span> SCRIPTS
-            </div>
-        </a>
+<div class="nav-right">
 
-        <div class="nav-links">
-            <a href="#script-library" class="nav-link">Scripts</a>
-            <a href="#community" class="nav-link">Community</a>
-        </div>
+<a class="nav-btn" href="https://discord.gg/3paKAgw6Pg" target="_blank">
+<svg class="svg" viewBox="0 0 24 24">
+<path d="M19.5 5.1A16 16 0 0 0 15.6 4l-.5 1a14 14 0 0 0-6.2 0L8.4 4a16 16 0 0 0-3.9 1.1C1.7 8.8 1 12.4 1.4 16a16 16 0 0 0 4.8 2.4l1.2-1.6a13 13 0 0 1-1.8-.9l.4-.3c3.5 1.7 7.4 1.7 10.9 0l.4.3c-.6.4-1.2.7-1.8.9l1.2 1.6a16 16 0 0 0 4.8-2.4c.5-4.1-.6-7.7-3.8-10.9ZM8.8 14.8c-1 0-1.9-1-1.9-2.2s.9-2.2 1.9-2.2c1.1 0 2 1 2 2.2s-.9 2.2-2 2.2Zm6.4 0c-1 0-1.9-1-1.9-2.2s.9-2.2 1.9-2.2c1.1 0 2 1 2 2.2s-.9 2.2-2 2.2Z"/>
+</svg>
+<span>Discord</span>
+</a>
 
-        <div class="nav-social">
+<a class="nav-btn" href="https://youtube.com/@project_yin" target="_blank">
+<svg class="svg" viewBox="0 0 24 24">
+<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.5 15.6V8.4l6.4 3.6-6.4 3.6Z"/>
+</svg>
+<span>YouTube</span>
+</a>
 
-            <a
-                href="https://discord.gg/3paKAgw6Pg"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M19.54 5.13A16.06 16.06 0 0 0 15.56 4l-.5 1.02a14.8 14.8 0 0 0-4.12 0L10.44 4a16.1 16.1 0 0 0-3.98 1.13C3.94 8.82 3.25 12.4 3.6 15.93a16.3 16.3 0 0 0 4.9 2.48l1.18-1.61c-.65-.24-1.28-.54-1.88-.9l.46-.35c3.64 1.7 7.59 1.7 11.19 0l.47.35c-.6.36-1.23.66-1.88.9l1.18 1.61a16.3 16.3 0 0 0 4.9-2.48c.41-4.1-.7-7.65-3.58-10.8ZM8.92 14.8c-1.08 0-1.96-.99-1.96-2.2s.86-2.2 1.96-2.2c1.1 0 1.98.99 1.96 2.2 0 1.21-.86 2.2-1.96 2.2Zm6.16 0c-1.08 0-1.96-.99-1.96-2.2s.86-2.2 1.96-2.2c1.1 0 1.98.99 1.96 2.2 0 1.21-.86 2.2-1.96 2.2Z"/>
-                </svg>
+</div>
 
-                <span>Discord</span>
-            </a>
-
-            <a
-                href="https://youtube.com/@project_yin"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.8 31.8 0 0 0 0 12a31.8 31.8 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.8 31.8 0 0 0 24 12a31.8 31.8 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
-                </svg>
-
-                <span>YouTube</span>
-            </a>
-
-        </div>
-    </div>
+</div>
 </nav>
 
 
+<div class="layout">
+
+<aside class="sidebar">
+
+<div class="side-title">Library</div>
+
+<a class="side-link active" href="#home">
+    Overview
+</a>
+
+<a class="side-link" href="#games">
+    Games
+    <span class="side-count" id="side-games">0</span>
+</a>
+
+<a class="side-link" href="#scripts">
+    All Scripts
+    <span class="side-count" id="side-scripts">0</span>
+</a>
+
+<div class="side-divider"></div>
+
+<div class="side-title">Games</div>
+
+<div id="sidebar-games"></div>
+
+<div class="side-divider"></div>
+
+<div class="side-small">
+    Project Yin<br>
+    Roblox script library
+</div>
+
+</aside>
+
+
+<main class="main" id="home">
+
 <section class="hero">
 
-    <div class="hero-symbol"></div>
+<div class="hero-kicker">
+<span class="dot"></span>
+Project Yin Library
+</div>
 
-    <div class="hero-content">
+<h1>
+Roblox scripts.<br>
+<span>One place.</span>
+</h1>
 
-        <div class="eyebrow">
-            <span class="status-dot"></span>
-            Project Yin
-        </div>
+<p>
+Browse the Project Yin script library. Find scripts by game,
+search the collection, copy code instantly, or open the
+corresponding Roblox game page.
+</p>
 
-        <h1>
-            Roblox scripts.<br>
-            <span>Nothing else.</span>
-        </h1>
+<div class="hero-buttons">
 
-        <p>
-            A clean collection of Project Yin scripts for Roblox.
-            Browse the library, find what you need, and copy it
-            without digging through old messages.
-        </p>
+<a class="btn btn-red" href="#scripts">
+<svg class="svg" viewBox="0 0 24 24">
+<path d="M4 4h16v16H4V4Zm3 3v10h10V7H7Z"/>
+</svg>
+Browse scripts
+</a>
 
-        <div class="hero-actions">
+<a class="btn btn-dark" href="https://discord.gg/3paKAgw6Pg" target="_blank">
+Join Discord
+</a>
 
-            <a href="#script-library" class="primary-btn">
-                <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M4 4h16v16H4V4Zm3 3v10h10V7H7Z"/>
-                </svg>
+</div>
 
-                Browse Scripts
-            </a>
+</section>
 
-            <a href="#community" class="secondary-btn">
-                <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-2h2v2Zm1.8-7.1-.9.9c-.7.7-.9 1.2-.9 2.2h-2c0-1.5.3-2.3 1.2-3.2l1.1-1.1c.3-.3.5-.7.5-1.2a1.8 1.8 0 0 0-3.6 0h-2a3.8 3.8 0 0 1 7.6 0c0 .9-.4 1.8-1 2.4Z"/>
-                </svg>
 
-                Join Us
-            </a>
+<section class="stats">
 
-        </div>
+<div class="stat">
+<div class="stat-number" id="stat-scripts">0</div>
+<div class="stat-label">Scripts</div>
+</div>
 
-    </div>
+<div class="stat">
+<div class="stat-number" id="stat-games">0</div>
+<div class="stat-label">Games</div>
+</div>
+
+<div class="stat">
+<div class="stat-number">24/7</div>
+<div class="stat-label">Library</div>
+</div>
+
+<div class="stat">
+<div class="stat-number">YIN</div>
+<div class="stat-label">Project</div>
+</div>
+
 </section>
 
 
-<section class="community" id="community">
+<section class="section">
 
-    <div class="community-box">
+<div class="section-head">
 
-        <div class="community-left">
+<div>
+<div class="section-title">
+<h2>Featured</h2>
+<span class="badge">LATEST</span>
+</div>
+<p class="section-sub">
+A few scripts from the current collection.
+</p>
+</div>
 
-            <div class="community-label">
-                Project Yin Community
-            </div>
+</div>
 
-            <h2>
-                Join the Discord.
-            </h2>
+<div class="featured" id="featured"></div>
 
-            <p>
-                Updates, releases, support and everything Project Yin.
-            </p>
+</section>
 
-        </div>
 
-        <div class="community-buttons">
+<section class="section" id="games">
 
-            <a
-                class="discord-btn"
-                href="https://discord.gg/3paKAgw6Pg"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M19.54 5.13A16.06 16.06 0 0 0 15.56 4l-.5 1.02a14.8 14.8 0 0 0-4.12 0L10.44 4a16.1 16.1 0 0 0-3.98 1.13C3.94 8.82 3.25 12.4 3.6 15.93a16.3 16.3 0 0 0 4.9 2.48l1.18-1.61c-.65-.24-1.28-.54-1.88-.9l.46-.35c3.64 1.7 7.59 1.7 11.19 0l.47.35c-.6.36-1.23.66-1.88.9l1.18 1.61a16.3 16.3 0 0 0 4.9-2.48c.41-4.1-.7-7.65-3.58-10.8ZM8.92 14.8c-1.08 0-1.96-.99-1.96-2.2s.86-2.2 1.96-2.2c1.1 0 1.98.99 1.96 2.2 0 1.21-.86 2.2-1.96 2.2Zm6.16 0c-1.08 0-1.96-.99-1.96-2.2-1.1 0-1.98.99-1.96 2.2 0 1.21.86 2.2 1.96 2.2Z"/>
-                </svg>
+<div class="section-head">
 
-                Join Discord
-            </a>
+<div>
+<div class="section-title">
+<h2>Games</h2>
+<span class="badge">CATEGORIES</span>
+</div>
 
-            <a
-                class="youtube-btn"
-                href="https://youtube.com/@project_yin"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.8 31.8 0 0 0 0 12a31.8 31.8 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.8 31.8 0 0 0 24 12a31.8 31.8 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
-                </svg>
+<p class="section-sub">
+Browse scripts by Roblox game.
+</p>
+</div>
 
-                YouTube
-            </a>
+</div>
 
-        </div>
-    </div>
+<div class="games" id="games-list"></div>
+
 </section>
 
 
-<section class="library" id="script-library">
+<section class="section" id="scripts">
 
-    <div class="section-head">
+<div class="section-head">
 
-        <div class="section-title">
+<div>
+<div class="section-title">
+<h2>Script Library</h2>
+<span class="badge" id="library-count">0</span>
+</div>
 
-            <h2>
-                Script Library
-            </h2>
+<p class="section-sub">
+Every available Project Yin script.
+</p>
+</div>
 
-            <span class="script-count" id="script-count">
-                0
-            </span>
+<div class="library-tools">
 
-        </div>
+<input
+class="search"
+id="search"
+placeholder="Search scripts..."
+autocomplete="off"
+>
 
-        <input
-            class="search"
-            id="search"
-            type="search"
-            placeholder="Search scripts..."
-            autocomplete="off"
-        >
+<select class="filter" id="filter">
+<option value="all">All games</option>
+</select>
 
-    </div>
+</div>
 
-    <div id="script-list"></div>
+</div>
 
-    <div class="empty" id="empty">
-        No scripts found.
-    </div>
+<div class="scripts" id="script-list"></div>
 
 </section>
+
+
+<section class="section" id="community">
+
+<div class="community">
+
+<div class="community-inner">
+
+<div>
+<div class="community-label">Project Yin Community</div>
+
+<h2>Stay updated.</h2>
+
+<p>
+Releases, updates, support and announcements are posted in the Discord.
+</p>
+</div>
+
+<div class="community-actions">
+
+<a
+class="btn btn-red"
+href="https://discord.gg/3paKAgw6Pg"
+target="_blank"
+>
+Join Discord
+</a>
+
+<a
+class="btn btn-dark"
+href="https://youtube.com/@project_yin"
+target="_blank"
+>
+YouTube
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+</div>
 
 
 <footer>
-    Project Yin · Roblox Script Library
+
+<div class="footer-inner">
+
+<div>
+Project Yin · Roblox Script Library
+</div>
+
+<div class="footer-links">
+<a href="#home">Home</a>
+<a href="#games">Games</a>
+<a href="#scripts">Scripts</a>
+<a href="https://discord.gg/3paKAgw6Pg" target="_blank">Discord</a>
+</div>
+
+</div>
+
 </footer>
 
 
 <script>
 
-const scriptList = document.getElementById("script-list");
+const list = document.getElementById("script-list");
+const gamesList = document.getElementById("games-list");
+const featured = document.getElementById("featured");
+const sidebarGames = document.getElementById("sidebar-games");
+
 const search = document.getElementById("search");
-const empty = document.getElementById("empty");
-const count = document.getElementById("script-count");
+const filter = document.getElementById("filter");
 
 let scripts = [];
 
 
-function robloxIcon() {
-    return `
-        <svg viewBox="0 0 24 24">
-            <path d="m6.4 2.5 15.1 4.7-4.1 14.3-15-4.7L6.4 2.5Zm2.4 6.1-1.3 4.6 4.7 1.4 1.3-4.5-4.7-1.5Z"/>
-        </svg>
-    `;
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
 }
 
 
-function escapeHTML(value) {
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+function robloxIcon(){
+
+return `
+<svg class="svg" viewBox="0 0 24 24">
+<path d="m6.4 2.5 15.1 4.7-4.1 14.3-15-4.7L6.4 2.5Zm2.4 6.1-1.3 4.6 4.7 1.4 1.3-4.5-4.7-1.5Z"/>
+</svg>
+`;
+
 }
 
 
-function render() {
+function uniqueGames(){
 
-    const query =
-        search.value.trim().toLowerCase();
+const map = new Map();
 
-    const filtered =
-        scripts.filter(script => {
+scripts.forEach(script => {
 
-            const searchable = [
-                script.name,
-                script.category,
-                script.game,
-                script.description,
-                script.code
-            ]
-            .join(" ")
-            .toLowerCase();
+const key = script.game || "Other";
 
-            return searchable.includes(query);
-        });
+if(!map.has(key)){
 
+map.set(key,{
+name:key,
+url:script.gameUrl || "#",
+count:0
+});
 
-    count.textContent = filtered.length;
+}
 
-    scriptList.innerHTML = "";
+map.get(key).count++;
 
+});
 
-    filtered.forEach(script => {
+return [...map.values()];
 
-        const card = document.createElement("article");
-
-        card.className = "script-card";
-
-
-        const gameUrl =
-            script.gameUrl || "#";
-
-
-        card.innerHTML = `
-
-            <div class="script-top">
-
-                <a
-                    class="game-icon"
-                    href="${escapeHTML(gameUrl)}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Open ${escapeHTML(script.game || "Roblox")} on Roblox"
-                >
-                    ${robloxIcon()}
-                </a>
-
-
-                <div class="script-main">
-
-                    <div class="script-name-row">
-
-                        <h3 class="script-name">
-                            ${escapeHTML(script.name)}
-                        </h3>
-
-                        <span class="script-category">
-                            ${escapeHTML(script.category || "ROBLOX")}
-                        </span>
-
-                    </div>
-
-
-                    <div class="script-desc">
-
-                        <a
-                            class="game-link"
-                            href="${escapeHTML(gameUrl)}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            ${escapeHTML(script.game || "Roblox")}
-                        </a>
-
-                        ·
-
-                        ${escapeHTML(script.description || "")}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="code">
-
-                <pre>${escapeHTML(script.code)}</pre>
-
-            </div>
-
-
-            <div class="script-bottom">
-
-                <button class="copy">
-                    Copy Script
-                </button>
-
-            </div>
-        `;
-
-
-        const copy =
-            card.querySelector(".copy");
-
-
-        copy.addEventListener("click", async () => {
-
-            try {
-
-                await navigator.clipboard.writeText(
-                    script.code
-                );
-
-                copy.textContent = "Copied";
-                copy.classList.add("copied");
-
-
-                setTimeout(() => {
-
-                    copy.textContent = "Copy Script";
-                    copy.classList.remove("copied");
-
-                }, 1000);
-
-            } catch {
-
-                copy.textContent = "Copy failed";
-
-                setTimeout(() => {
-                    copy.textContent = "Copy Script";
-                }, 1000);
-
-            }
-
-        });
-
-
-        scriptList.appendChild(card);
-
-    });
-
-
-    empty.style.display =
-        filtered.length === 0
-            ? "block"
-            : "none";
 }
 
 
-search.addEventListener("input", render);
+function updateStats(){
+
+const games = uniqueGames();
+
+document.getElementById("stat-scripts").textContent =
+scripts.length;
+
+document.getElementById("stat-games").textContent =
+games.length;
+
+document.getElementById("side-scripts").textContent =
+scripts.length;
+
+document.getElementById("side-games").textContent =
+games.length;
+
+document.getElementById("library-count").textContent =
+scripts.length;
+
+}
+
+
+function renderGames(){
+
+const games = uniqueGames();
+
+gamesList.innerHTML = "";
+
+sidebarGames.innerHTML = "";
+
+filter.innerHTML =
+`<option value="all">All games</option>`;
+
+
+games.forEach(game => {
+
+gamesList.innerHTML += `
+
+<a class="game" href="${escapeHTML(game.url)}" target="_blank">
+
+<div class="game-top">
+
+<div class="game-icon">
+${robloxIcon()}
+</div>
+
+<div>
+
+<div class="game-name">
+${escapeHTML(game.name)}
+</div>
+
+<div class="game-count">
+${game.count} ${game.count === 1 ? "script" : "scripts"}
+</div>
+
+</div>
+
+</div>
+
+<div class="game-link">
+Open on Roblox →
+</div>
+
+</a>
+
+`;
+
+
+sidebarGames.innerHTML += `
+
+<a
+class="side-link"
+href="#scripts"
+data-game-link="${escapeHTML(game.name)}"
+>
+${escapeHTML(game.name)}
+<span class="side-count">${game.count}</span>
+</a>
+
+`;
+
+
+filter.innerHTML += `
+<option value="${escapeHTML(game.name)}">
+${escapeHTML(game.name)}
+</option>
+`;
+
+});
+
+}
+
+
+function renderFeatured(){
+
+featured.innerHTML = "";
+
+const items =
+scripts.filter(x => x.featured).slice(0,4);
+
+const fallback =
+items.length ? items : scripts.slice(0,2);
+
+fallback.forEach(script => {
+
+featured.innerHTML += `
+
+<div class="feature">
+
+<div class="feature-top">
+
+<div class="feature-game">
+
+<a
+class="feature-icon"
+href="${escapeHTML(script.gameUrl || "#")}"
+target="_blank"
+>
+${robloxIcon()}
+</a>
+
+<div>
+
+<div class="feature-name">
+${escapeHTML(script.name)}
+</div>
+
+<div class="feature-game-name">
+${escapeHTML(script.game)}
+</div>
+
+</div>
+
+</div>
+
+<span class="badge">
+${escapeHTML(script.category || "SCRIPT")}
+</span>
+
+</div>
+
+
+<h3>
+${escapeHTML(script.name)}
+</h3>
+
+<p>
+${escapeHTML(script.description || "Project Yin script.")}
+</p>
+
+
+<div class="feature-bottom">
+
+<div class="feature-tags">
+
+${(script.tags || [])
+.map(tag => `<span class="tag">${escapeHTML(tag)}</span>`)
+.join("")}
+
+</div>
+
+<a
+class="open-btn"
+href="#scripts"
+>
+View script
+</a>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+function renderScripts(){
+
+const query =
+search.value.trim().toLowerCase();
+
+const selected =
+filter.value;
+
+const results =
+scripts.filter(script => {
+
+const text = [
+
+script.name,
+script.game,
+script.category,
+script.description,
+...(script.tags || [])
+
+].join(" ").toLowerCase();
+
+
+const matchesSearch =
+!query || text.includes(query);
+
+const matchesGame =
+selected === "all" ||
+script.game === selected;
+
+return matchesSearch && matchesGame;
+
+});
+
+
+list.innerHTML = "";
+
+
+results.forEach(script => {
+
+const article =
+document.createElement("article");
+
+article.className = "script";
+
+
+article.innerHTML = `
+
+<div class="script-head">
+
+<a
+class="script-icon"
+href="${escapeHTML(script.gameUrl || "#")}"
+target="_blank"
+title="Open Roblox game"
+>
+${robloxIcon()}
+</a>
+
+
+<div class="script-info">
+
+<h3 class="script-name">
+${escapeHTML(script.name)}
+</h3>
+
+<div class="script-game">
+${escapeHTML(script.game)}
+</div>
+
+<div class="script-description">
+${escapeHTML(script.description || "")}
+</div>
+
+
+<div class="script-labels">
+
+<span class="script-label">
+${escapeHTML(script.category || "Roblox")}
+</span>
+
+${(script.tags || [])
+.slice(0,3)
+.map(tag =>
+`<span class="script-label">${escapeHTML(tag)}</span>`
+)
+.join("")}
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="code">
+
+<pre>${escapeHTML(script.code)}</pre>
+
+</div>
+
+
+<div class="script-footer">
+
+<a
+class="roblox-open"
+href="${escapeHTML(script.gameUrl || "#")}"
+target="_blank"
+>
+Open ${escapeHTML(script.game)} on Roblox →
+</a>
+
+<button class="copy">
+Copy
+</button>
+
+</div>
+
+`;
+
+
+const button =
+article.querySelector(".copy");
+
+
+button.addEventListener("click",async()=>{
+
+try{
+
+await navigator.clipboard.writeText(script.code);
+
+button.textContent = "Copied";
+button.classList.add("copied");
+
+setTimeout(()=>{
+
+button.textContent = "Copy";
+button.classList.remove("copied");
+
+},1200);
+
+}catch{
+
+button.textContent = "Failed";
+
+setTimeout(()=>{
+button.textContent = "Copy";
+},1200);
+
+}
+
+});
+
+
+list.appendChild(article);
+
+});
+
+
+if(!results.length){
+
+list.innerHTML = `
+<div style="
+grid-column:1/-1;
+padding:45px;
+text-align:center;
+border:1px dashed #202023;
+border-radius:8px;
+color:#4b4b50;
+font-size:10px;
+">
+No scripts found.
+</div>
+`;
+
+}
+
+}
+
+
+search.addEventListener("input",renderScripts);
+filter.addEventListener("change",renderScripts);
 
 
 fetch("scripts.json")
-    .then(response => {
+.then(response => {
 
-        if (!response.ok) {
-            throw new Error("scripts.json could not be loaded.");
-        }
+if(!response.ok)
+throw new Error("Could not load scripts.json");
 
-        return response.json();
+return response.json();
 
-    })
-    .then(data => {
+})
+.then(data => {
 
-        scripts =
-            Array.isArray(data)
-                ? data
-                : [];
+scripts =
+Array.isArray(data)
+? data
+: data.scripts || [];
 
-        render();
+updateStats();
+renderGames();
+renderFeatured();
+renderScripts();
 
-    })
-    .catch(error => {
+})
+.catch(error => {
 
-        scriptList.innerHTML = "";
+console.error(error);
 
-        empty.textContent = error.message;
-        empty.style.display = "block";
+list.innerHTML = `
+<div style="
+grid-column:1/-1;
+padding:45px;
+text-align:center;
+color:#555;
+font-size:10px;
+">
+Could not load the script library.
+</div>
+`;
 
-    });
+});
 
 </script>
 
