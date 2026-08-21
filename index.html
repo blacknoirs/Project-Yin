@@ -30,12 +30,11 @@
             color: white;
         }
 
-        /* Background */
-
         .background {
             position: fixed;
             inset: 0;
             pointer-events: none;
+
             background:
                 radial-gradient(
                     circle at 15% 20%,
@@ -48,8 +47,6 @@
                     transparent 25%
                 );
         }
-
-        /* Header */
 
         header {
             width: 100%;
@@ -86,11 +83,6 @@
             gap: 11px;
         }
 
-        /*
-            Proper minimal Yin-Yang symbol.
-            No weird AI-looking logo.
-        */
-
         .yin-yang {
             width: 31px;
             height: 31px;
@@ -98,12 +90,9 @@
             border-radius: 50%;
 
             position: relative;
-
-            background: #e5e5e5;
-
             overflow: hidden;
 
-            transform: rotate(0deg);
+            background: #e5e5e5;
 
             box-shadow:
                 0 0 0 1px #292929,
@@ -162,7 +151,39 @@
             color: #555;
         }
 
-        /* Main */
+        .socials {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-left: auto;
+            margin-right: 20px;
+        }
+
+        .socials a {
+            color: #777;
+            text-decoration: none;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            padding: 7px 10px;
+
+            border: 1px solid #1b1b1b;
+            border-radius: 6px;
+
+            background: #0b0b0b;
+
+            transition:
+                color 0.12s ease,
+                border-color 0.12s ease,
+                background 0.12s ease;
+        }
+
+        .socials a:hover {
+            color: #eee;
+            background: #111;
+            border-color: #2a2a2a;
+        }
 
         main {
             width: 100%;
@@ -213,11 +234,8 @@
             line-height: 1.6;
         }
 
-        /* Search */
-
         .search-wrap {
             margin-bottom: 22px;
-
             position: relative;
         }
 
@@ -268,8 +286,6 @@
             pointer-events: none;
         }
 
-        /* Grid */
-
         #scripts {
             display: grid;
 
@@ -278,8 +294,6 @@
 
             gap: 12px;
         }
-
-        /* Script */
 
         .script {
             min-width: 0;
@@ -355,8 +369,6 @@
             text-transform: uppercase;
         }
 
-        /* Code */
-
         .code-wrap {
             border-top: 1px solid #171717;
             border-bottom: 1px solid #171717;
@@ -403,8 +415,6 @@
             border-radius: 10px;
         }
 
-        /* Actions */
-
         .actions {
             padding: 10px;
 
@@ -448,8 +458,6 @@
             color: #d62a50;
         }
 
-        /* Empty */
-
         .empty {
             display: none;
 
@@ -462,8 +470,6 @@
             font-size: 12px;
         }
 
-        /* Footer */
-
         footer {
             margin-top: 30px;
 
@@ -474,9 +480,8 @@
             text-align: center;
         }
 
-        /* Mobile */
-
         @media (max-width: 720px) {
+
             header {
                 height: 64px;
             }
@@ -487,6 +492,14 @@
 
             .header-right {
                 display: none;
+            }
+
+            .socials {
+                margin-right: 0;
+            }
+
+            .socials a {
+                padding: 6px 8px;
             }
 
             main {
@@ -512,11 +525,33 @@
     <div class="header-inner">
 
         <div class="brand">
+
             <div class="yin-yang"></div>
 
             <div class="brand-name">
                 <span>YIN</span> / SCRIPTS
             </div>
+
+        </div>
+
+        <div class="socials">
+
+            <a
+                href="https://discord.gg/3paKAgw6Pg"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Discord
+            </a>
+
+            <a
+                href="https://youtube.com/@project_yin"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                YouTube
+            </a>
+
         </div>
 
         <div class="header-right">
@@ -578,9 +613,14 @@
 
 let scripts = [];
 
-const container = document.getElementById("scripts");
-const search = document.getElementById("search");
-const empty = document.getElementById("empty");
+const container =
+    document.getElementById("scripts");
+
+const search =
+    document.getElementById("search");
+
+const empty =
+    document.getElementById("empty");
 
 
 function escapeHTML(value) {
@@ -621,7 +661,7 @@ function render() {
     container.innerHTML = "";
 
 
-    filtered.forEach((script, index) => {
+    filtered.forEach(script => {
 
         const card =
             document.createElement("article");
@@ -661,10 +701,7 @@ function render() {
 
             <div class="actions">
 
-                <button
-                    class="copy"
-                    data-index="${index}"
-                >
+                <button class="copy">
                     Copy
                 </button>
 
@@ -677,37 +714,48 @@ function render() {
             card.querySelector(".copy");
 
 
-        button.addEventListener("click", async () => {
+        button.addEventListener(
+            "click",
+            async () => {
 
-            try {
+                try {
 
-                await navigator.clipboard.writeText(
-                    script.code
-                );
+                    await navigator.clipboard.writeText(
+                        script.code
+                    );
 
-                button.textContent = "Copied";
-                button.classList.add("copied");
+                    button.textContent = "Copied";
 
-
-                setTimeout(() => {
-
-                    button.textContent = "Copy";
-                    button.classList.remove("copied");
-
-                }, 1000);
+                    button.classList.add(
+                        "copied"
+                    );
 
 
-            } catch {
+                    setTimeout(() => {
 
-                button.textContent = "Failed";
+                        button.textContent = "Copy";
 
-                setTimeout(() => {
-                    button.textContent = "Copy";
-                }, 1000);
+                        button.classList.remove(
+                            "copied"
+                        );
+
+                    }, 1000);
+
+
+                } catch {
+
+                    button.textContent = "Failed";
+
+                    setTimeout(() => {
+
+                        button.textContent = "Copy";
+
+                    }, 1000);
+
+                }
 
             }
-
-        });
+        );
 
 
         container.appendChild(card);
@@ -733,9 +781,11 @@ fetch("scripts.json")
     .then(response => {
 
         if (!response.ok) {
+
             throw new Error(
                 "Could not load scripts.json"
             );
+
         }
 
         return response.json();
@@ -743,7 +793,9 @@ fetch("scripts.json")
     })
     .then(data => {
 
-        scripts = data;
+        scripts = Array.isArray(data)
+            ? data
+            : [];
 
         render();
 
